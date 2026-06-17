@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐱 宠物小猫展示</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #fff9f0 0%, #fde9e0 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+      padding: 20px;
+    }
+
+    .card {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(255, 248, 245, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 56px;
+      padding: 40px 36px 48px;
+      box-shadow: 0 20px 40px rgba(200, 120, 90, 0.20),
+                  0 8px 16px rgba(0, 0, 0, 0.04),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 225, 210, 0.5);
+      transition: all 0.25s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 28px 48px rgba(190, 100, 70, 0.25);
+    }
+
+    /* 标题区域 */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .header h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: #4d2e1b;
+      letter-spacing: 1.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 235, 220, 0.7);
+      padding: 8px 28px 12px 28px;
+      border-radius: 100px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 4px 8px rgba(140, 80, 50, 0.08);
+    }
+
+    .header h1 span {
+      font-size: 2.8rem;
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin-top: 12px;
+      font-size: 1.1rem;
+      color: #7a5a44;
+      background: rgba(255, 245, 235, 0.6);
+      display: inline-block;
+      padding: 6px 24px;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 210, 185, 0.3);
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    /* 图片网格 */
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: stretch;
+      gap: 30px;
+      margin-top: 12px;
+    }
+
+    .cat-item {
+      flex: 1 1 280px;
+      max-width: 380px;
+      min-width: 240px;
+      background: white;
+      border-radius: 40px;
+      padding: 18px 18px 22px;
+      box-shadow: 0 15px 30px rgba(160, 100, 70, 0.13);
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s ease;
+      background: rgba(255, 252, 250, 0.85);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 215, 195, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cat-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 28px 40px rgba(170, 100, 70, 0.20);
+      border-color: rgba(240, 180, 155, 0.6);
+    }
+
+    .image-wrapper {
+      border-radius: 28px;
+      overflow: hidden;
+      background: #fae7dc;
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.02);
+    }
+
+    .image-wrapper img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease, filter 0.3s ease;
+      filter: brightness(1.02) saturate(1.05);
+    }
+
+    .cat-item:hover .image-wrapper img {
+      transform: scale(1.02);
+      filter: brightness(1.05) saturate(1.1);
+    }
+
+    .cat-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #3d2c1f;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      padding: 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cat-name small {
+      font-weight: 400;
+      font-size: 0.9rem;
+      color: #a67a62;
+      margin-left: auto;
+      background: #f5e1d4;
+      padding: 2px 14px;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+    }
+
+    .cat-desc {
+      font-size: 0.98rem;
+      color: #5b4032;
+      padding: 0 8px 6px 8px;
+      line-height: 1.5;
+      border-bottom: 1px dashed rgba(200, 150, 125, 0.25);
+      margin-bottom: 10px;
+      flex: 1;
+    }
+
+    .cat-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 6px 6px 2px 6px;
+    }
+
+    .tag {
+      background: #f7e3d6;
+      color: #5f3f2e;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(255, 205, 180, 0.3);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
+    .tag:first-child {
+      background: #e3cdbc;
+      color: #3f2c1f;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 38px;
+      font-size: 0.9rem;
+      color: #8e6f5b;
+      border-top: 1px solid rgba(200, 160, 140, 0.2);
+      padding-top: 22px;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-note span {
+      background: rgba(235, 210, 195, 0.3);
+      padding: 3px 16px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 700px) {
+      .card {
+        padding: 24px 18px 32px;
+        border-radius: 36px;
+      }
+      .header h1 {
+        font-size: 2.0rem;
+        padding: 6px 18px 10px 18px;
+      }
+      .header h1 span {
+        font-size: 2.2rem;
+      }
+      .subtitle {
+        font-size: 0.95rem;
+        padding: 4px 16px;
+      }
+      .cat-item {
+        flex: 1 1 100%;
+        max-width: 400px;
+      }
+      .cat-name {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 16px 12px 24px;
+        border-radius: 28px;
+      }
+      .header h1 {
+        font-size: 1.7rem;
+        gap: 4px;
+        padding: 4px 14px 8px 14px;
+      }
+      .image-wrapper {
+        border-radius: 20px;
+      }
+      .cat-item {
+        padding: 12px 12px 16px;
+        border-radius: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- 标题区域 -->
+    <div class="header">
+      <h1>
+        <span>🐈</span> 小猫展示 <span>🐾</span>
+      </h1>
+      <div class="subtitle">
+        ✦ 两只可爱毛球 · 今日份治愈 ✦
+      </div>
+    </div>
+
+    <!-- 两张猫咪图片展示 -->
+    <div class="gallery">
+      <!-- 第一只小猫：橘猫 -->
+      <div class="cat-item">
+        <div class="image-wrapper">
+          <!-- 第一张图片：橘猫（来自 placekitten 的占位图，但依然很可爱） -->
+          <img 
+            src="https://placekitten.com/400/400?image=1" 
+            alt="橘色小猫咪，阳光般温暖" 
+            loading="lazy"
+          >
+        </div>
+        <div class="cat-name">
+          🧡 小橘
+          <small>3个月</small>
+        </div>
+        <div class="cat-desc">
+          软乎乎的橘色小毛球，最爱在窗台上晒太阳。
+        </div>
+        <div class="cat-tags">
+          <span class="tag">🍊 暖男</span>
+          <span class="tag">😺 爱撒娇</span>
+          <span class="tag">🐟 贪吃</span>
+        </div>
+      </div>
+
+      <!-- 第二只小猫：奶牛猫 -->
+      <div class="cat-item">
+        <div class="image-wrapper">
+          <!-- 第二张图片：奶牛猫（同样是 placekitten 的图片，风格不同） -->
+          <img 
+            src="https://placekitten.com/400/400?image=2" 
+            alt="奶牛花色小猫咪，眼神机灵" 
+            loading="lazy"
+          >
+        </div>
+        <div class="cat-name">
+          🖤 奶牛
+          <small>4个月</small>
+        </div>
+        <div class="cat-desc">
+          黑白花纹的小探险家，对任何纸箱都充满好奇。
+        </div>
+        <div class="cat-tags">
+          <span class="tag">⚡ 机灵鬼</span>
+          <span class="tag">🎾 爱玩耍</span>
+          <span class="tag">📦 纸箱控</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部说明 (展示两张图片) -->
+    <div class="footer-note">
+      <span>🐱 两张可爱小猫照片</span>
+      <span>✨ 来自 placekitten 的随机萌照</span>
+    </div>
+  </div>
+</body>
+</html>
