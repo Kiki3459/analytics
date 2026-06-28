@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steam Review Analysis · Big Data Project</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4f7fb;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      padding: 2rem 1.5rem;
+      color: #1e293b;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 20px 60px rgba(0, 20, 40, 0.08);
+      padding: 2.5rem 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid #e9edf4;
+      padding-bottom: 1.5rem;
+    }
+
+    .header-left h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(145deg, #0b2b4f, #1d4a7a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-left p {
+      color: #5e6f8d;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+      font-weight: 400;
+    }
+
+    .team-badge {
+      background: #eef3fa;
+      border-radius: 60px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      color: #1d4a7a;
+      border: 1px solid #d3dfec;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .team-badge span {
+      background: #1d4a7a;
+      color: white;
+      border-radius: 30px;
+      padding: 0.15rem 0.8rem;
+      font-size: 0.75rem;
+    }
+
+    /* summary cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .summary-card {
+      background: #f8faff;
+      border-radius: 20px;
+      padding: 1.2rem 0.8rem;
+      text-align: center;
+      border: 1px solid #e6edf6;
+      transition: 0.15s;
+    }
+
+    .summary-card:hover {
+      background: #f0f6ff;
+      border-color: #b8cde0;
+    }
+
+    .summary-card .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .summary-card .value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0a2942;
+      margin-top: 0.2rem;
+    }
+
+    .summary-card .sub {
+      font-size: 0.8rem;
+      color: #3b5a7a;
+    }
+
+    /* section */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 2.5rem 0 1.2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .section-title small {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #5a6f8b;
+      margin-left: 0.5rem;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .chart-box {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 1.2rem 1rem 1rem 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid #eef3f9;
+    }
+
+    .chart-box h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1d3a5a;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .chart-box img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid #eef3f9;
+      background: #fafcff;
+    }
+
+    .chart-box .insight {
+      font-size: 0.85rem;
+      color: #2b4a6a;
+      background: #f2f7fe;
+      padding: 0.6rem 1rem;
+      border-radius: 14px;
+      margin-top: 0.8rem;
+      border-left: 3px solid #3f7eb6;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .wordcloud-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .wordcloud-item {
+      flex: 1 1 300px;
+      background: #fbfdff;
+      border-radius: 24px;
+      padding: 1rem 0.5rem 0.8rem;
+      border: 1px solid #e2ebf5;
+      text-align: center;
+    }
+
+    .wordcloud-item img {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      border: 1px solid #eef3f9;
+    }
+
+    .wordcloud-item p {
+      margin-top: 0.5rem;
+      font-weight: 500;
+      color: #1a3d60;
+    }
+
+    .footer-note {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      text-align: center;
+      color: #5e738f;
+      border-top: 1px solid #e3eaf2;
+      padding-top: 1.8rem;
+    }
+
+    .badge-tech {
+      display: inline-block;
+      background: #eaf0f8;
+      border-radius: 30px;
+      padding: 0.15rem 1rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #1d4f7a;
+      margin-right: 0.4rem;
+    }
+
+    @media (max-width: 720px) {
+      .chart-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .header {
+        flex-direction: column;
+        align-items: start;
+        gap: 1rem;
+      }
+      .container {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>🎮 Steam Review · Big Data Analysis</h1>
+      <p>HDFS · PySpark · Spark SQL · Python · 552k+ reviews</p>
+    </div>
+    <div class="team-badge">
+      👥 Team <span>Lucky2761</span>
+    </div>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="summary-grid">
+    <div class="summary-card"><div class="label">Total Reviews</div><div class="value">552,957</div><div class="sub">after cleaning</div></div>
+    <div class="summary-card"><div class="label">Unique Games</div><div class="value">741</div><div class="sub">distinct titles</div></div>
+    <div class="summary-card"><div class="label">Avg. Recommend</div><div class="value">83.0%</div><div class="sub">global rate</div></div>
+    <div class="summary-card"><div class="label">Avg. Price</div><div class="value">$26.96</div><div class="sub">USD</div></div>
+    <div class="summary-card"><div class="label">Avg. Playtime</div><div class="value">123h</div><div class="sub">per reviewer</div></div>
+    <div class="summary-card"><div class="label">Avg. Review Length</div><div class="value">34.6</div><div class="sub">words</div></div>
+  </div>
+
+  <!-- Q1: price vs recommendation -->
+  <div class="section-title">📊 Price & Recommendation <small>correlation: -0.091 (weak negative)</small></div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Recommendation rate by price range</h3>
+      <img src="q11.png" alt="Recommendation rate by price range" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: price_recommend_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">💡 Games under $30 have >84% recommend rate; $60–100 drops to 62.5%.</div>
+    </div>
+    <div class="chart-box">
+      <h3>Review volume by price range</h3>
+      <img src="q12.png" alt="Review count by price range" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: price_recommend_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">📈 57% of reviews come from the $10–30 segment — the most active price tier.</div>
+    </div>
+  </div>
+
+  <!-- Q2: review length & votes -->
+  <div class="section-title">📝 Review Length vs. Engagement</div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Avg. votes by review length</h3>
+      <img src="q21.png" alt="Average votes by review length" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: wordcount_votes_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">⬆️ Very long reviews (>100 words) get 3.5× more helpful votes than short ones.</div>
+    </div>
+    <div class="chart-box">
+      <h3>% of reviews receiving votes</h3>
+      <img src="q22.png" alt="Proportion of reviews with votes" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: wordcount_votes_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">📊 47% of very long reviews get votes vs. only 24% of very short reviews.</div>
+    </div>
+  </div>
+
+  <!-- Q3: humor -->
+  <div class="section-title">😂 Humorous vs. Non‑Humorous Reviews</div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Avg. votes (helpful vs. funny)</h3>
+      <img src="q31.png" alt="Humorous reviews votes comparison" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: humor_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">🔥 Humorous reviews get 10.9× more total votes, but have lower recommend rate (55% vs 86%).</div>
+    </div>
+    <div class="chart-box">
+      <h3>Recommendation rate comparison</h3>
+      <img src="q32.png" alt="Recommendation rate humorous vs non-humorous" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: humor_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">🤔 Humor is more common in critical reviews — a coping or engagement mechanism.</div>
+    </div>
+  </div>
+
+  <!-- Q4: weekday -->
+  <div class="section-title">📅 Review activity by weekday</div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Review count per weekday</h3>
+      <img src="q41.png" alt="Review count by weekday" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: weekday_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">📆 Weekends (Sun/Sat) show highest volume; Friday has peak helpful votes.</div>
+    </div>
+    <div class="chart-box">
+      <h3>Avg. helpful & funny votes by weekday</h3>
+      <img src="q42.png" alt="Average votes by weekday" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: weekday_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">📈 Friday stands out for engagement, possibly due to new releases.</div>
+    </div>
+  </div>
+
+  <!-- Q5: short vs long -->
+  <div class="section-title">⚖️ Short vs. Long Reviews — trade-off</div>
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Avg. votes by length category</h3>
+      <img src="q51.png" alt="Average votes by short vs long reviews" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: short_long_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">📉 Short reviews get fewer votes but have higher recommendation rates (88%).</div>
+    </div>
+    <div class="chart-box">
+      <h3>Recommendation rate trend</h3>
+      <img src="q52.png" alt="Recommendation rate by review length" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3EChart: short_long_analysis.png%3C/text%3E%3C/svg%3E'">
+      <div class="insight">📉 Longer reviews tend to be more critical — recommendation rate drops from 88% to 69%.</div>
+    </div>
+  </div>
+
+  <!-- Q6: word clouds -->
+  <div class="section-title">☁️ Word clouds — positive vs. negative reviews</div>
+  <div class="wordcloud-flex">
+    <div class="wordcloud-item">
+      <img src="q61.png" alt="Positive reviews word cloud" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3Ewordcloud_positive.png%3C/text%3E%3C/svg%3E'">
+      <p>🔵 Positive reviews · 129k unique words</p>
+    </div>
+    <div class="wordcloud-item">
+      <img src="q62.png" alt="Negative reviews word cloud" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22400%22 height=%22200%22 fill=%22%23f4f7fb%22/%3E%3Ctext x=%2220%22 y=%22100%22 font-family=%22Segoe UI%22 font-size=%2214%22 fill=%22%235a6f8b%22%3Ewordcloud_negative.png%3C/text%3E%3C/svg%3E'">
+      <p>🔴 Negative reviews · 51k unique words</p>
+    </div>
+  </div>
+  <div style="margin-top: 0.5rem; font-size:0.9rem; background:#f6faff; padding:0.5rem 1rem; border-radius:30px; display:inline-block; color:#2e4c70;">
+    🧠 “best” · “love” vs “bugs” · “unplayable” · “fix” — clear sentiment signals
+  </div>
+
+  <!-- footer -->
+  <div class="footer-note">
+    <span class="badge-tech">HDFS</span>
+    <span class="badge-tech">PySpark</span>
+    <span class="badge-tech">Spark SQL</span>
+    <span class="badge-tech">Python</span>
+    <span class="badge-tech">Matplotlib</span>
+    <span class="badge-tech">Seaborn</span>
+    <br><br>
+    Big Data Final Project — Team Lucky2761 · 2026 · dashboard with report figures
+  </div>
+
+</div>
+</body>
+</html>
